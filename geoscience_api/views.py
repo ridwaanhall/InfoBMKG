@@ -5,6 +5,7 @@ from rest_framework.response import Response
 import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
+import base64
 
 BASE_URL = settings.BASE_URL
 
@@ -16,8 +17,7 @@ def make_api_request_no_keyword(endpoint):
         response.raise_for_status()
 
         content_type = response.headers.get('Content-Type', '')
-        # print("Content-Type:", content_type)
-
+        
         if 'application/json' in content_type:
             return response.json()
         elif 'application/xml' in content_type or 'text/xml' in content_type:
@@ -30,6 +30,8 @@ def make_api_request_no_keyword(endpoint):
             return {'narration': response.text.strip()}
         elif 'application/octet-stream' in content_type:
             return response.content
+        elif 'image/jpeg' in content_type or 'image/png' in content_type:
+            return response.content  # Return raw image bytes
         else:
             return {'error': f'Unsupported content type: {content_type}'}
     except requests.exceptions.HTTPError as http_err:
@@ -41,7 +43,7 @@ def make_api_request_no_keyword(endpoint):
     except requests.exceptions.RequestException as req_err:
         return {'error': 'An error occurred', 'details': str(req_err)}
 
-# maps
+# latests
 class SingleLatestQuake(APIView): # Latest Earthquake
     def get(self, _):
         latest = make_api_request_no_keyword('datagempa.json')
@@ -71,6 +73,7 @@ class LatestQuakeNarration(APIView):  # Latest Earthquake Narration
         
         return Response({'error': 'Event ID not found in latest earthquake data'})
 
+# histories
 class LessThan3MonthsQuakes(APIView): # Earthquakes < 3 Months
     def get(self, _):
         less_than_3_months = make_api_request_no_keyword('3mgempaQL.json')
@@ -296,3 +299,82 @@ class IndoFaultsLines(GeoJsonAPIView):
 class FaultsIndoWorld(GeoJsonAPIView):
     def get(self, request):
         return super().get(request, 'fault_indo_world.geojson')
+
+# images (jpg and png)
+class ImageAPIView(APIView):
+    def get_image(self, endpoint):
+        image = make_api_request_no_keyword(endpoint)
+        if isinstance(image, bytes):
+            content_type = 'image/jpeg' if endpoint.endswith('.jpg') else 'image/png'
+            base64_image = base64.b64encode(image).decode('utf-8')
+            image_url = f"data:{content_type};base64,{base64_image}"
+            return image_url
+        return None
+
+class ImpactList(ImageAPIView):
+    def get(self, _):
+        latest = make_api_request_no_keyword('datagempa.json')
+        if 'info' in latest and latest['info']:
+            eventid = latest['info']['eventid']
+            impactlist_endpoint = f"{eventid}_rev/impact_list.jpg"
+            image_url = self.get_image(impactlist_endpoint)
+            if image_url:
+                return Response({'image_url': image_url, 'message': 'Impact list image retrieved successfully'})
+        return Response({'error': 'Event ID not found in latest earthquake data'})
+
+class IntensityMap(ImageAPIView):
+    def get(self, _):
+        latest = make_api_request_no_keyword('datagempa.json')
+        if 'info' in latest and latest['info']:
+            eventid = latest['info']['eventid']
+            intensitylogo_endpoint = f"{eventid}_rev/intensity_logo.jpg"
+            image_url = self.get_image(intensitylogo_endpoint)
+            if image_url:
+                return Response({'image_url': image_url, 'message': 'Intensity map image retrieved successfully'})
+        return Response({'error': 'Event ID not found in latest earthquake data'})
+
+class StationListMMI(ImageAPIView):
+    def get(self, _):
+        latest = make_api_request_no_keyword('datagempa.json')
+        if 'info' in latest and latest['info']:
+            eventid = latest['info']['eventid']
+            stationlist_endpoint = f"{eventid}_rev/stationlist_MMI.jpg"
+            image_url = self.get_image(stationlist_endpoint)
+            if image_url:
+                return Response({'image_url': image_url, 'message': 'Station list MMI image retrieved successfully'})
+        return Response({'error': 'Event ID not found in latest earthquake data'})
+
+class LocationMap(ImageAPIView):
+    def get(self, _):
+        latest = make_api_request_no_keyword('datagempa.json')
+        if 'info' in latest and latest['info']:
+            eventid = latest['info']['eventid']
+            locmap_endpoint = f"{eventid}_rev/loc_map.png"
+            image_url = self.get_image(locmap_endpoint)
+            if image_url:
+                return Response({'image_url': image_url, 'message': 'Location map image retrieved successfully'})
+        return Response({'error': 'Event ID not found in latest earthquake data'})
+
+class ImagesURL(APIView):
+    def get(self, _):
+        latest = make_api_request_no_keyword('datagempa.json')
+        if 'info' in latest and latest['info']:
+            eventid = latest['info']['eventid']
+            impactlist_endpoint = f"{eventid}_rev/impact_list.jpg"
+            intensitylogo_endpoint = f"{eventid}_rev/intensity_logo.jpg"
+            stationlist_endpoint = f"{eventid}_rev/stationlist_MMI.jpg"
+            locmap_endpoint = f"{eventid}_rev/loc_map.png"
+
+            impactlist_url = ImpactList().get_image(impactlist_endpoint)
+            intensitylogo_url = IntensityMap().get_image(intensitylogo_endpoint)
+            stationlist_url = StationListMMI().get_image(stationlist_endpoint)
+            locmap_url = LocationMap().get_image(locmap_endpoint)
+
+            return Response({
+                'impactlist_url': impactlist_url,
+                'intensitylogo_url': intensitylogo_url,
+                'stationlist_url': stationlist_url,
+                'locmap_url': locmap_url,
+                'message': 'Images retrieved successfully'
+            })
+        return Response({'error': 'Event ID not found in latest earthquake data'})

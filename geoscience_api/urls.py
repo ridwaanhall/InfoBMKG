@@ -22,5 +22,7 @@ urlpatterns = [
     path('last30stunami', views.Last30TsunamiEvent.as_view(), name='last-30-felt'),
     path('live30', views.Live30Event.as_view(), name='live-30-event'),
     
-    # 
+    # geojson
+    path('indo-fault-lines/', views.IndoFaultsLines.as_view(), name='indo-fault-lines'),
+    path('fault-indo-world/', views.FaultsIndoWorld.as_view(), name='fault-indo-world'),
 ]

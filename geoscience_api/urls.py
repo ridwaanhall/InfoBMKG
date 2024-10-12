@@ -3,9 +3,18 @@ from . import views
 
 # geoscience_api/urls.py
 urlpatterns = [
-    # maps
+    # latests
     path('latest/', views.SingleLatestQuake.as_view(), name='latest-quake'),
     path('latest-narration/', views.LatestQuakeNarration.as_view(), name='latest-quake-narration'),
+    
+    # images
+    path('images-url/', views.ImagesURL.as_view(), name='images-url'),
+    path('impact-list/', views.ImpactList.as_view(), name='impact-list'),
+    path('intensity-map/', views.IntensityMap.as_view(), name='intensity-map'),
+    path('station-list-MMI/', views.StationListMMI.as_view(), name='station-list-mmi'),
+    path('location-map/', views.LocationMap.as_view(), name='location-map'),
+    
+    # histories
     path('last3months/', views.LessThan3MonthsQuakes.as_view(), name='last-3-months-quake'),
     path('last5years/', views.LessThan5YearsQuakes.as_view(), name='last-5-years-quake'),
     

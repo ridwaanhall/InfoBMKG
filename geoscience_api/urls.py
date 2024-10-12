@@ -7,8 +7,10 @@ urlpatterns = [
     path('latest/', views.SingleLatestQuake.as_view(), name='latest-quake'),
     path('latest-narration/', views.LatestQuakeNarration.as_view(), name='latest-quake-narration'),
     
-    # images
+    # images url
     path('images-url/', views.ImagesURL.as_view(), name='images-url'),
+    
+    # images
     path('impact-list/', views.ImpactList.as_view(), name='impact-list'),
     path('intensity-map/', views.IntensityMap.as_view(), name='intensity-map'),
     path('station-list-MMI/', views.StationListMMI.as_view(), name='station-list-mmi'),

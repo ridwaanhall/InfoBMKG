@@ -1,3 +1,4 @@
+import json
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -27,6 +28,8 @@ def make_api_request_no_keyword(endpoint):
             return {'narration': narration_text}
         elif 'text/plain' in content_type:
             return {'narration': response.text.strip()}
+        elif 'application/octet-stream' in content_type:
+            return response.content
         else:
             return {'error': f'Unsupported content type: {content_type}'}
     except requests.exceptions.HTTPError as http_err:
@@ -270,6 +273,26 @@ class Live30Event(APIView): # Live Earthquake
 
         return Response(events)
 
-
-    
 # geojson
+class GeoJsonAPIView(APIView):
+    def get(self, request, endpoint):
+        geojson_data = make_api_request_no_keyword(endpoint)
+        
+        if isinstance(geojson_data, dict) and 'error' in geojson_data:
+            return Response(geojson_data)
+
+        if isinstance(geojson_data, bytes):
+            try:
+                geojson_data = json.loads(geojson_data.decode('utf-8'))
+            except json.JSONDecodeError as json_err:
+                return Response({'error': 'Failed to decode GeoJSON', 'details': str(json_err)})
+
+        return Response(geojson_data)
+
+class IndoFaultsLines(GeoJsonAPIView):
+    def get(self, request):
+        return super().get(request, 'indo_faults_lines.geojson')
+
+class FaultsIndoWorld(GeoJsonAPIView):
+    def get(self, request):
+        return super().get(request, 'fault_indo_world.geojson')

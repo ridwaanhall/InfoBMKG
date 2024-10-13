@@ -57,8 +57,6 @@ class LatestQuakeNarration(APIView):  # Latest Earthquake Narration
             narration_endpoint = f"{eventid}_narasi.txt"
             narration_response = make_api_request_no_keyword(narration_endpoint)
 
-            # print("Narration Response Headers:", narration_response)
-
             if 'narration' in narration_response:
                 soup = BeautifulSoup(narration_response['narration'], 'html.parser')
                 cleaned_narration = soup.get_text(separator='\n').strip()
@@ -107,7 +105,6 @@ class Last30Events(APIView):  # > 5 Magnitude
         events = make_api_request_no_keyword('last30event.xml')
         if isinstance(events, ET.Element):
 
-            # Extracting alert-level details
             alert_details = {
                 "identifier": events.find('{urn:oasis:names:tc:emergency:cap:1.2}identifier').text,
                 "sender": events.find('{urn:oasis:names:tc:emergency:cap:1.2}sender').text,
@@ -120,7 +117,6 @@ class Last30Events(APIView):  # > 5 Magnitude
             }
 
             for info in events.findall('{urn:oasis:names:tc:emergency:cap:1.2}info'):
-                # For each event info
                 event_info = {
                     'event': info.find('{urn:oasis:names:tc:emergency:cap:1.2}event').text,
                     'date': info.find('{urn:oasis:names:tc:emergency:cap:1.2}date').text,
@@ -154,7 +150,6 @@ class Last30FeltEvent(APIView): # Felt Earthquake
         events = make_api_request_no_keyword('last30feltevent.xml')
         if isinstance(events, ET.Element):
 
-            # Extracting alert-level details
             alert_details = {
                 "identifier": events.find('{urn:oasis:names:tc:emergency:cap:1.2}identifier').text,
                 "sender": events.find('{urn:oasis:names:tc:emergency:cap:1.2}sender').text,
@@ -167,7 +162,6 @@ class Last30FeltEvent(APIView): # Felt Earthquake
             }
 
             for info in events.findall('{urn:oasis:names:tc:emergency:cap:1.2}info'):
-                # For each event info
                 event_info = {
                     'event': info.find('{urn:oasis:names:tc:emergency:cap:1.2}event').text,
                     'date': info.find('{urn:oasis:names:tc:emergency:cap:1.2}date').text,
@@ -201,7 +195,6 @@ class Last30TsunamiEvent(APIView): # Tsunami Event
         events = make_api_request_no_keyword('last30tsunamievent.xml')
         if isinstance(events, ET.Element):
 
-            # Extracting alert-level details
             alert_details = {
                 "identifier": events.find('{urn:oasis:names:tc:emergency:cap:1.2}identifier').text,
                 "sender": events.find('{urn:oasis:names:tc:emergency:cap:1.2}sender').text,
@@ -214,7 +207,6 @@ class Last30TsunamiEvent(APIView): # Tsunami Event
             }
 
             for info in events.findall('{urn:oasis:names:tc:emergency:cap:1.2}info'):
-                # For each event info
                 event_info = {
                     'event': info.find('{urn:oasis:names:tc:emergency:cap:1.2}event').text,
                     'date': info.find('{urn:oasis:names:tc:emergency:cap:1.2}date').text,

@@ -70,6 +70,17 @@ class LatestQuakeNarration(APIView):  # Latest Earthquake Narration
                 return Response({'error': 'Invalid narration format or data not found'})
         
         return Response({'error': 'Event ID not found in latest earthquake data'})
+    
+class LatestQuakeFocal(APIView):  # Latest Earthquake Focal
+    def get(self, _):
+        latest = make_api_request_no_keyword('datagempa.json')
+        if 'info' in latest and latest['info']:
+            eventid = latest['info']['eventid']
+            focal_endpoint = f"{eventid}_focal.json"
+            focal_response = make_api_request_no_keyword(focal_endpoint)
+            return Response(focal_response)
+        else:
+            return Response({'error': 'Event ID not found in latest earthquake data'})
 
 # histories
 class LessThan3MonthsQuakes(APIView): # Earthquakes < 3 Months

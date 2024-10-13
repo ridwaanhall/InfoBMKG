@@ -6,6 +6,7 @@ urlpatterns = [
     # latests
     path('latest/', views.SingleLatestQuake.as_view(), name='latest-quake'),
     path('latest-narration/', views.LatestQuakeNarration.as_view(), name='latest-quake-narration'),
+    path('latest-focal/', views.LatestQuakeFocal.as_view(), name='latest-quake-focal'),
     
     # images url
     path('images-url/', views.ImagesURL.as_view(), name='images-url'),

@@ -2,13 +2,13 @@ import requests
 from django.shortcuts import render
 from django.conf import settings
 
-BASE_URL = settings.BASE_URL
+OUR_URL = settings.OUR_URL
 
 def dashboard(request):
     return render(request, 'earthquake/dashboard.html')
 
 def latest(request):
-    latest = requests.get(f'{BASE_URL}/datagempa.json')
+    latest = requests.get(f'{OUR_URL}/latest/')
     latest = latest.json()
     coordinates = latest['info']['point']['coordinates']
     longitude, latitude = coordinates.split(',')

@@ -5,13 +5,20 @@ from django.conf import settings
 OUR_URL = settings.OUR_URL
 
 def dashboard(request):
-    latest = requests.get(f'{OUR_URL}/latest/')
-    latest = latest.json()
-    coordinates = latest['info']['point']['coordinates']
-    longitude, latitude = coordinates.split(',')
+    try:
+        latest_response = requests.get(f'{OUR_URL}/latest/')
+        latest_response.raise_for_status()  # Raise an HTTPError for bad responses
+        latest = latest_response.json()
+        coordinates = latest['info']['point']['coordinates']
+        longitude, latitude = coordinates.split(',')
+    except (requests.RequestException, KeyError, ValueError) as e:
+        latest = None
+        longitude = None
+        latitude = None
+
+    fault_indo_world_response = requests.get(f'{OUR_URL}/fault-indo-world/')
+    fault_indo_world = fault_indo_world_response.json()
     
-    fault_indo_world = requests.get(f'{OUR_URL}/fault-indo-world/')
-    fault_indo_world = fault_indo_world.json()
     context = {
         'latest': latest,
         'longitude': longitude,

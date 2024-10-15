@@ -41,13 +41,29 @@ def dashboard(request):
     return render(request, 'earthquake/dashboard.html', context)
 
 def latest(request):
-    latest = requests.get(f'{OUR_URL}/latest/')
-    latest = latest.json()
-    coordinates = latest['info']['point']['coordinates']
-    longitude, latitude = coordinates.split(',')
+    try:
+        latest_response = requests.get(f'{OUR_URL}/latest/')
+        latest_response.raise_for_status()  # Raise an HTTPError for bad responses
+        latest = latest_response.json()
+        
+        if 'info' in latest and 'point' in latest['info'] and 'coordinates' in latest['info']['point']:
+            coordinates = latest['info']['point']['coordinates']
+            longitude, latitude = coordinates.split(',')
+        else:
+            longitude = None
+            latitude = None
+    except (requests.RequestException, KeyError, ValueError) as e:
+        latest = None
+        longitude = None
+        latitude = None
+    
+    images_url_response = requests.get(f'{OUR_URL}/images-url/')
+    images_url = images_url_response.json()
+    
     context = {
         'latest': latest,
         'longitude': longitude,
         'latitude': latitude,
+        'images_url': images_url,
     }
     return render(request, 'earthquake/latest.html', context)

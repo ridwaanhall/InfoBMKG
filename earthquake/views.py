@@ -9,8 +9,13 @@ def dashboard(request):
         latest_response = requests.get(f'{OUR_URL}/latest/')
         latest_response.raise_for_status()  # Raise an HTTPError for bad responses
         latest = latest_response.json()
-        coordinates = latest['info']['point']['coordinates']
-        longitude, latitude = coordinates.split(',')
+        
+        if 'info' in latest and 'point' in latest['info'] and 'coordinates' in latest['info']['point']:
+            coordinates = latest['info']['point']['coordinates']
+            longitude, latitude = coordinates.split(',')
+        else:
+            longitude = None
+            latitude = None
     except (requests.RequestException, KeyError, ValueError) as e:
         latest = None
         longitude = None

@@ -1,5 +1,7 @@
 # Latest Earthquake ID
 
+![Blocked](http://bmkg-content-inatews.storage.googleapis.com/a.JPG)
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -47,7 +49,7 @@ To install this project, follow these steps:
 To use this project, run the following command:
 
 ```bash
-python main.py
+py manage.py runserver
 ```
 
 ## Contributing
@@ -60,4 +62,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any inquiries, please contact [yourname@domain.com](mailto:yourname@domain.com).
+For any inquiries, please contact [ridwaanhall.dev@gmail.com](mailto:ridwaanhall.dev@gmail.com).

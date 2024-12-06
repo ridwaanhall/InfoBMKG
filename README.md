@@ -29,7 +29,7 @@ To install this project, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/latest-earthquake-id.git
+    git clone https://github.com/ridwaanhall/latest-earthquake-id.git
     ```
 
 2. Navigate to the project directory:

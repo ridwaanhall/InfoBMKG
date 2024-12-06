@@ -24,8 +24,8 @@ def dashboard(request):
     fault_indo_world_response = requests.get(f'{OUR_URL}/fault-indo-world/')
     fault_indo_world = fault_indo_world_response.json()
     
-    intensity_map_response = requests.get(f'{OUR_URL}/intensity-map/')
-    intensity_map = intensity_map_response.json()
+    mmi_map_response = requests.get(f'{OUR_URL}/mmi-map/')
+    mmi_map = mmi_map_response.json()
     
     narration_response = requests.get(f'{OUR_URL}/latest-narration/')
     narration = narration_response.json()
@@ -35,7 +35,7 @@ def dashboard(request):
         'longitude': longitude,
         'latitude': latitude,
         'fault_indo_world': fault_indo_world,
-        'intensity_map': intensity_map,
+        'mmi_map': mmi_map,
         'narration': narration,
     }
     return render(request, 'earthquake/dashboard.html', context)

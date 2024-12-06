@@ -358,6 +358,17 @@ class LocationMap(ImageAPIView):
                 return Response({'image_url': image_url, 'message': 'Location map image retrieved successfully'})
         return Response({'error': 'Event ID not found in latest earthquake data'})
 
+class MapMMI(ImageAPIView):
+    def get(self, _):
+        latest = make_api_request_no_keyword('datagempa.json')
+        if 'info' in latest and latest['info']:
+            eventid = latest['info']['eventid']
+            map_mmi_endpoint = f"{eventid}.mmi.jpg"
+            image_url = self.get_image(map_mmi_endpoint)
+            if image_url:
+                return Response({'image_url': image_url, 'message': 'Map MMI image retrieved successfully'})
+        return Response({'error': 'Event ID not found in latest earthquake data'})
+
 class ImagesURL(APIView):
     def get(self, _):
         latest = make_api_request_no_keyword('datagempa.json')
@@ -367,17 +378,31 @@ class ImagesURL(APIView):
             intensitylogo_endpoint = f"{eventid}_rev/intensity_logo.jpg"
             stationlist_endpoint = f"{eventid}_rev/stationlist_MMI.jpg"
             locmap_endpoint = f"{eventid}_rev/loc_map.png"
+            map_mmi_endpoint = f"{eventid}.mmi.jpg"
 
             impactlist_url = ImpactList().get_image(impactlist_endpoint)
             intensitylogo_url = IntensityMap().get_image(intensitylogo_endpoint)
             stationlist_url = StationListMMI().get_image(stationlist_endpoint)
             locmap_url = LocationMap().get_image(locmap_endpoint)
+            map_mmi_url = MapMMI().get_image(map_mmi_endpoint)
 
-            return Response({
+            images = {
                 'impactlist_url': impactlist_url,
                 'intensitylogo_url': intensitylogo_url,
                 'stationlist_url': stationlist_url,
                 'locmap_url': locmap_url,
-                'message': 'Images retrieved successfully'
+                'map_mmi_url': map_mmi_url
+            }
+
+            available_images = {key: value for key, value in images.items() if value}
+            unavailable_images = [key for key, value in images.items() if not value]
+
+            message = 'Images retrieved successfully for: ' + ', '.join(available_images.keys())
+            if unavailable_images:
+                message += '. Images not found for: ' + ', '.join(unavailable_images)
+
+            return Response({
+                **images,
+                'message': message
             })
         return Response({'error': 'Event ID not found in latest earthquake data'})

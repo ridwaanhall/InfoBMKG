@@ -358,7 +358,7 @@ class LocationMap(ImageAPIView):
                 return Response({'image_url': image_url, 'message': 'Location map image retrieved successfully'})
         return Response({'error': 'Event ID not found in latest earthquake data'})
 
-class MapMMI(ImageAPIView):
+class MMIMap(ImageAPIView):
     def get(self, _):
         latest = make_api_request_no_keyword('datagempa.json')
         if 'info' in latest and latest['info']:
@@ -384,14 +384,14 @@ class ImagesURL(APIView):
             intensitylogo_url = IntensityMap().get_image(intensitylogo_endpoint)
             stationlist_url = StationListMMI().get_image(stationlist_endpoint)
             locmap_url = LocationMap().get_image(locmap_endpoint)
-            map_mmi_url = MapMMI().get_image(map_mmi_endpoint)
+            mmi_url = MMIMap().get_image(map_mmi_endpoint)
 
             images = {
                 'impactlist_url': impactlist_url,
                 'intensitylogo_url': intensitylogo_url,
                 'stationlist_url': stationlist_url,
                 'locmap_url': locmap_url,
-                'map_mmi_url': map_mmi_url
+                'mmi_url': mmi_url
             }
 
             available_images = {key: value for key, value in images.items() if value}

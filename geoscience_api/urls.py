@@ -16,7 +16,7 @@ urlpatterns = [
     path('intensity-map/', views.IntensityMap.as_view(), name='intensity-map'),
     path('station-list-MMI/', views.StationListMMI.as_view(), name='station-list-mmi'),
     path('location-map/', views.LocationMap.as_view(), name='location-map'),
-    path('map-mmi/', views.MapMMI.as_view(), name='map-mmi'),
+    path('mmi-map/', views.MMIMap.as_view(), name='mmi-map'),
 
     # histories
     path('last3months/', views.LessThan3MonthsQuakes.as_view(), name='last-3-months-quake'),

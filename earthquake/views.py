@@ -68,15 +68,15 @@ def latest_html(request):
     }
     return render(request, 'earthquake/latest.html', context)
 
-def live30_html(request):
+def live200_html(request):
     try:
-        live30_response = requests.get(f'{OUR_URL}/live30/')
-        live30_response.raise_for_status()  # Raise an HTTPError for bad responses
-        live30 = live30_response.json()
+        live200_response = requests.get(f'{OUR_URL}/live200/')
+        live200_response.raise_for_status()  # Raise an HTTPError for bad responses
+        live200 = live200_response.json()
     except requests.RequestException as e:
-        live30 = None
+        live200 = None
     
     context = {
-        'live30': live30,
+        'live200': live200,
     }
-    return render(request, 'earthquake/live30.html', context)
+    return render(request, 'earthquake/live200.html', context)

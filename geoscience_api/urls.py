@@ -33,7 +33,7 @@ urlpatterns = [
     path('destructive-epicenter/', views.DestructiveEarthquakesEpicenter.as_view(), name='destructive-earthquakes-epicenter'),
     
     # events
-    path('live30/', views.Live30Events.as_view(), name='live-30-events'),
+    path('live200/', views.Live200Events.as_view(), name='live-200-events'),
     path('last30/', views.Last30Events.as_view(), name='last-30-events'),
     path('last30felt/', views.Last30FeltEvents.as_view(), name='last-30-felt'),
     path('last30stunami/', views.Last30TsunamiEvents.as_view(), name='last-30-tsunami'),

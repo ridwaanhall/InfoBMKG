@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 import base64
 
 BASE_URL = settings.BASE_URL
+OUR_URL = settings.OUR_URL
 
 def make_api_request_no_keyword(endpoint):
     api_url = f"{BASE_URL}/{endpoint}"
@@ -42,6 +43,94 @@ def make_api_request_no_keyword(endpoint):
         return {'error': 'Request timed out', 'details': str(timeout_err)}
     except requests.exceptions.RequestException as req_err:
         return {'error': 'An error occurred', 'details': str(req_err)}
+
+# documentation
+class Documentation(APIView):
+    def get(self, _):
+        return Response({
+            'endpoints': {
+            'latest': {
+                'url': f'{OUR_URL}/latest/',
+                'note': 'Latest Earthquake'
+            },
+            'latest-narration': {
+                'url': f'{OUR_URL}/latest-narration/',
+                'note': 'Latest Earthquake Narration'
+            },
+            'latest-focal': {
+                'url': f'{OUR_URL}/latest-focal/',
+                'note': 'Latest Earthquake Focal'
+            },
+            'images-url': {
+                'url': f'{OUR_URL}/images-url/',
+                'note': 'Images URL'
+            },
+            'impact-list': {
+                'url': f'{OUR_URL}/impact-list/',
+                'note': 'Impact List Image'
+            },
+            'intensity-map': {
+                'url': f'{OUR_URL}/intensity-map/',
+                'note': 'Intensity Map Image'
+            },
+            'station-list-MMI': {
+                'url': f'{OUR_URL}/station-list-MMI/',
+                'note': 'Station List MMI Image'
+            },
+            'location-map': {
+                'url': f'{OUR_URL}/location-map/',
+                'note': 'Location Map Image'
+            },
+            'mmi-map': {
+                'url': f'{OUR_URL}/mmi-map/',
+                'note': 'Map MMI Image'
+            },
+            'last3months': {
+                'url': f'{OUR_URL}/last3months/',
+                'note': 'Earthquakes < 3 Months'
+            },
+            'last5years': {
+                'url': f'{OUR_URL}/last5years/',
+                'note': 'Earthquakes < 5 Years'
+            },
+            'seismic-sensor-bmkg': {
+                'url': f'{OUR_URL}/seismic-sensor-bmkg/',
+                'note': 'Seismic Sensor BMKG'
+            },
+            'seismic-sensor-global': {
+                'url': f'{OUR_URL}/seismic-sensor-global/',
+                'note': 'Seismic Sensor Global'
+            },
+            'destructive-epicenter': {
+                'url': f'{OUR_URL}/destructive-epicenter/',
+                'note': 'Destructive Earthquake Epicenter'
+            },
+            'last30': {
+                'url': f'{OUR_URL}/last30/',
+                'note': 'Last 30 Events > 5 Magnitude'
+            },
+            'last30felt': {
+                'url': f'{OUR_URL}/last30felt/',
+                'note': 'Last 30 Felt Earthquake'
+            },
+            'last30stunami': {
+                'url': f'{OUR_URL}/last30stunami',
+                'note': 'Last 30 Tsunami Event'
+            },
+            'live30': {
+                'url': f'{OUR_URL}/live30',
+                'note': 'Live Earthquake'
+            },
+            'indo-fault-lines': {
+                'url': f'{OUR_URL}/indo-fault-lines/',
+                'note': 'Indo Fault Lines GeoJSON'
+            },
+            'fault-indo-world': {
+                'url': f'{OUR_URL}/fault-indo-world/',
+                'note': 'Fault Indo World GeoJSON'
+            }
+            }
+        })
 
 # latests
 class SingleLatestQuake(APIView): # Latest Earthquake
@@ -156,7 +245,7 @@ class Last30Events(APIView):  # > 5 Magnitude
 
         return Response(events)
     
-class Last30FeltEvent(APIView): # Felt Earthquake
+class Last30FeltEvents(APIView): # Felt Earthquake
     def get(self, _):
         events = make_api_request_no_keyword('last30feltevent.xml')
         if isinstance(events, ET.Element):
@@ -201,7 +290,7 @@ class Last30FeltEvent(APIView): # Felt Earthquake
 
         return Response(events)
     
-class Last30TsunamiEvent(APIView): # Tsunami Event
+class Last30TsunamiEvents(APIView): # Tsunami Event
     def get(self, _):
         events = make_api_request_no_keyword('last30tsunamievent.xml')
         if isinstance(events, ET.Element):
@@ -252,7 +341,7 @@ class Last30TsunamiEvent(APIView): # Tsunami Event
         
         return Response(events)
 
-class Live30Event(APIView): # Live Earthquake
+class Live30Events(APIView): # Live Earthquake
     def get(self, _):
         events = make_api_request_no_keyword('live30event.xml')
         if isinstance(events, ET.Element):

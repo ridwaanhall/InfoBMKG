@@ -4,7 +4,7 @@ from django.conf import settings
 
 OUR_URL = settings.OUR_URL
 
-def dashboard(request):
+def dashboard_html(request):
     try:
         latest_response = requests.get(f'{OUR_URL}/latest/')
         latest_response.raise_for_status()  # Raise an HTTPError for bad responses
@@ -40,7 +40,7 @@ def dashboard(request):
     }
     return render(request, 'earthquake/dashboard.html', context)
 
-def latest(request):
+def latest_html(request):
     try:
         latest_response = requests.get(f'{OUR_URL}/latest/')
         latest_response.raise_for_status()  # Raise an HTTPError for bad responses
@@ -67,3 +67,16 @@ def latest(request):
         'images_url': images_url,
     }
     return render(request, 'earthquake/latest.html', context)
+
+def live30_html(request):
+    try:
+        live30_response = requests.get(f'{OUR_URL}/live30/')
+        live30_response.raise_for_status()  # Raise an HTTPError for bad responses
+        live30 = live30_response.json()
+    except requests.RequestException as e:
+        live30 = None
+    
+    context = {
+        'live30': live30,
+    }
+    return render(request, 'earthquake/live30.html', context)

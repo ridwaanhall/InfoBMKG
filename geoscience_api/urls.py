@@ -34,8 +34,8 @@ urlpatterns = [
     
     # events
     path('live200/', views.Live200Events.as_view(), name='live-200-events'),
-    path('last30/', views.Last30Events.as_view(), name='last-30-events'),
     path('last30felt/', views.Last30FeltEvents.as_view(), name='last-30-felt'),
+    path('last30/', views.Last30Events.as_view(), name='last-30-events'),
     path('last30stunami/', views.Last30TsunamiEvents.as_view(), name='last-30-tsunami'),
     
     # geojson

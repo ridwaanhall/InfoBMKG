@@ -280,6 +280,7 @@ class Last30FeltEvents(APIView): # Felt Earthquake
                     'headline': info.find('{urn:oasis:names:tc:emergency:cap:1.2}headline').text,
                     'description': info.find('{urn:oasis:names:tc:emergency:cap:1.2}description').text,
                     'instruction': info.find('{urn:oasis:names:tc:emergency:cap:1.2}instruction').text,
+                    'felt': info.find('{urn:oasis:names:tc:emergency:cap:1.2}felt').text,
                     'shakemap': info.find('{urn:oasis:names:tc:emergency:cap:1.2}shakemap').text,
                     'timesent': info.find('{urn:oasis:names:tc:emergency:cap:1.2}timesent').text,
                 }

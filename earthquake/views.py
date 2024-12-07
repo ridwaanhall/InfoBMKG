@@ -93,3 +93,29 @@ def last30felt_html(request):
         'last30felt': last30felt,
     }
     return render(request, 'earthquake/last30felt.html', context)
+
+def last30_html(request):
+    try:
+        last30_response = requests.get(f'{OUR_URL}/last30/')
+        last30_response.raise_for_status()  # Raise an HTTPError for bad responses
+        last30 = last30_response.json()
+    except requests.RequestException as e:
+        last30 = None
+    
+    context = {
+        'last30': last30,
+    }
+    return render(request, 'earthquake/last30.html', context)
+
+def last30tsunami_html(request):
+    try:
+        last30tsunami_response = requests.get(f'{OUR_URL}/last30tsunami/')
+        last30tsunami_response.raise_for_status()  # Raise an HTTPError for bad responses
+        last30tsunami = last30tsunami_response.json()
+    except requests.RequestException as e:
+        last30tsunami = None
+    
+    context = {
+        'last30tsunami': last30tsunami,
+    }
+    return render(request, 'earthquake/last30tsunami.html', context)

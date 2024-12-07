@@ -341,7 +341,7 @@ class Last30TsunamiEvents(APIView): # Tsunami Event
         
         return Response(events)
 
-class Live30Events(APIView): # Live Earthquake
+class Live200Events(APIView): # Live Earthquake
     def get(self, _):
         events = make_api_request_no_keyword('live30event.xml')
         if isinstance(events, ET.Element):

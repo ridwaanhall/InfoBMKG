@@ -3,6 +3,9 @@ from . import views
 
 # geoscience_api/urls.py
 urlpatterns = [
+    # documentation
+    path('', views.Documentation.as_view(), name='documentation'),
+    
     # latests
     path('latest/', views.SingleLatestQuake.as_view(), name='latest-quake'),
     path('latest-narration/', views.LatestQuakeNarration.as_view(), name='latest-quake-narration'),
@@ -30,10 +33,10 @@ urlpatterns = [
     path('destructive-epicenter/', views.DestructiveEarthquakesEpicenter.as_view(), name='destructive-earthquakes-epicenter'),
     
     # events
+    path('live30/', views.Live30Events.as_view(), name='live-30-events'),
     path('last30/', views.Last30Events.as_view(), name='last-30-events'),
-    path('last30felt/', views.Last30FeltEvent.as_view(), name='last-30-felt'),
-    path('last30stunami', views.Last30TsunamiEvent.as_view(), name='last-30-felt'),
-    path('live30', views.Live30Event.as_view(), name='live-30-event'),
+    path('last30felt/', views.Last30FeltEvents.as_view(), name='last-30-felt'),
+    path('last30stunami/', views.Last30TsunamiEvents.as_view(), name='last-30-tsunami'),
     
     # geojson
     path('indo-fault-lines/', views.IndoFaultsLines.as_view(), name='indo-fault-lines'),

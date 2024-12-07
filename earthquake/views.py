@@ -80,3 +80,16 @@ def live200_html(request):
         'live200': live200,
     }
     return render(request, 'earthquake/live200.html', context)
+
+def last30felt_html(request):
+    try:
+        last30felt_response = requests.get(f'{OUR_URL}/last30felt/')
+        last30felt_response.raise_for_status()  # Raise an HTTPError for bad responses
+        last30felt = last30felt_response.json()
+    except requests.RequestException as e:
+        last30felt = None
+    
+    context = {
+        'last30felt': last30felt,
+    }
+    return render(request, 'earthquake/last30felt.html', context)

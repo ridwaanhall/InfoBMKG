@@ -507,19 +507,11 @@ async def check_earthquake_and_notify():
 
     earthquake_info = data['info']
     
-    date = earthquake_info.get('date', 'N/A')
-    time = earthquake_info.get('time', 'N/A')
-    coordinates = earthquake_info.get('point', {}).get('coordinates', 'N/A')
-    magnitude = earthquake_info.get('magnitude', 'N/A')
-    depth = earthquake_info.get('depth', 'N/A')
-    area = earthquake_info.get('area', 'N/A')
-    felt = earthquake_info.get('felt', 'N/A')
+    description = earthquake_info['description']
     
     message = (
-        f"🌍Earthquake Notification🌍\n\n"
-        f"📅Date: {date} 🕒Time: {time}\n"
-        f"📍Location: {coordinates} ({area})\n"
-        f"💪Magnitude: {magnitude} 📏Depth: {depth}\n"
+        f"🌋 *Earthquake Notification* 🌋\n\n"
+        f"📝 {description}"
     )
 
     subscribers = await sync_to_async(list)(Subscriber.objects.all())

@@ -19,6 +19,9 @@ async def start(update: Update, context: CallbackContext):
     first_name = update.message.from_user.first_name or ""
     last_name = update.message.from_user.last_name or ""
     username = update.message.from_user.username or ""
+    message_text = update.message.text
+    message_time = update.message.date
+    print(f"User @{username} sent: {message_text} at {message_time}")
 
     subscriber, created = await sync_to_async(Subscriber.objects.get_or_create)(chat_id=chat_id)
     subscriber.user_id = user_id

@@ -52,6 +52,10 @@ To use this project, run the following command:
 py manage.py runserver
 ```
 
+```bash
+\f
+```
+
 ## Contributing
 
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) first.

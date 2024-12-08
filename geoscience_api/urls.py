@@ -30,7 +30,7 @@ urlpatterns = [
     path('seismic-sensor-global/', views.SeismicSensorGlobal.as_view(), name='seismic-sensor-global'),
     
     # new menu
-    path('destructive-epicenter/', views.DestructiveEarthquakesEpicenter.as_view(), name='destructive-earthquakes-epicenter'),
+    path('destructive/', views.DestructiveEarthquakesEpicenter.as_view(), name='destructive'),
     
     # events
     path('live200/', views.Live200Events.as_view(), name='live200'),

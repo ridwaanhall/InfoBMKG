@@ -1,8 +1,30 @@
 import requests
 from django.shortcuts import render
+from telegram import Bot, Update
+from earthquake.models import Subscriber
+from telegram.ext import CallbackContext
+from asgiref.sync import sync_to_async
 from django.conf import settings
 
 OUR_URL = settings.OUR_URL
+BOT_TOKEN = settings.BOT_TOKEN
+bot = Bot(token=BOT_TOKEN)
+
+async def send_telegram_message(chat_id, message):
+    await bot.send_message(chat_id=chat_id, text=message)
+
+async def start(update: Update, context: CallbackContext):
+    chat_id = update.message.chat_id
+    await sync_to_async(Subscriber.objects.get_or_create)(chat_id=chat_id)
+    await update.message.reply_text("You have subscribed to earthquake notifications.")
+    await update.message.reply_text("If you want to unsubscribe, use /unsubscribe")
+
+async def unsubscribe(update: Update, context: CallbackContext):
+    chat_id = update.message.chat_id
+    await sync_to_async(Subscriber.objects.filter(chat_id=chat_id).delete)()
+    await update.message.reply_text("You have unsubscribed from earthquake notifications.")
+
+
 
 def dashboard_html(request):
     try:

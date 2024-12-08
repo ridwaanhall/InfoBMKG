@@ -15,20 +15,32 @@ async def send_telegram_message(chat_id, message):
 
 async def start(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
-    await sync_to_async(Subscriber.objects.get_or_create)(chat_id=chat_id)
-    await update.message.reply_text("You have subscribed to earthquake notifications.")
-    await update.message.reply_text("If you want to unsubscribe, use /unsubscribe")
+    user_id = update.message.from_user.id
+    first_name = update.message.from_user.first_name or ""
+    last_name = update.message.from_user.last_name or ""
+    username = update.message.from_user.username or ""
+
+    subscriber, created = await sync_to_async(Subscriber.objects.get_or_create)(chat_id=chat_id)
+    subscriber.user_id = user_id
+    subscriber.first_name = first_name
+    subscriber.last_name = last_name
+    subscriber.username = username
+    await sync_to_async(subscriber.save)()
+
+    await update.message.reply_text(f"Hi @{username}, thank you for subscribing to earthquake notifications. You'll receive updates on any seismic activities.\nBot owner: @ridwaanhall")
+    await update.message.reply_text("Use /unsubscribe if you wish to opt out of notifications.")
 
 async def unsubscribe(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
     await sync_to_async(Subscriber.objects.filter(chat_id=chat_id).delete)()
-    await update.message.reply_text("You have unsubscribed from earthquake notifications.")
-    
+    await update.message.reply_text("You have opted out of earthquake notifications.")
+
 async def help(update: Update, context: CallbackContext):
     await update.message.reply_text(
-        "Use /start to subscribe to earthquake notifications.\n"
-        "Use /unsubscribe to unsubscribe from earthquake notifications.\n"
-        "Use /help to see this message again."
+        "Here's how to use the bot:\n"
+        "/start - Subscribe to notifications.\n"
+        "/unsubscribe - Unsubscribe from notifications.\n"
+        "/help - View this help message."
     )
 
 def dashboard_html(request):

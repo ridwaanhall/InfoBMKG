@@ -21,7 +21,8 @@ async def start(update: Update, context: CallbackContext):
     username = update.message.from_user.username or ""
     message_text = update.message.text
     message_time = update.message.date
-    print(f"User @{username} sent: {message_text} at {message_time}")
+    
+    print(f"[{message_time}] {username}: \"{message_text}\"")
 
     subscriber, created = await sync_to_async(Subscriber.objects.get_or_create)(chat_id=chat_id)
     subscriber.user_id = user_id
@@ -35,16 +36,36 @@ async def start(update: Update, context: CallbackContext):
 
 async def unsubscribe(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
+    username = update.message.from_user.username or ""
+    message_text = update.message.text
+    message_time = update.message.date
+    
+    print(f"[{message_time}] {username}: \"{message_text}\"")
     await sync_to_async(Subscriber.objects.filter(chat_id=chat_id).delete)()
     await update.message.reply_text("You have opted out of earthquake notifications.")
 
 async def help(update: Update, context: CallbackContext):
+    username = update.message.from_user.username or ""
+    message_text = update.message.text
+    message_time = update.message.date
+    
+    print(f"[{message_time}] {username}: \"{message_text}\"")
+    
     await update.message.reply_text(
         "Here's how to use the bot:\n"
         "/start - Subscribe to notifications.\n"
         "/unsubscribe - Unsubscribe from notifications.\n"
         "/help - View this help message."
     )
+
+async def handle_message(update: Update, context: CallbackContext):
+    username = update.message.from_user.username or ""
+    message_text = update.message.text
+    message_time = update.message.date
+    
+    print(f"[{message_time}] {username}: \"{message_text}\"")
+    
+    await update.message.reply_text("Sorry, I can't assist with that. Please use /help to see available commands.")
 
 def dashboard_html(request):
     try:

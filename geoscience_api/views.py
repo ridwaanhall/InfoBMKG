@@ -504,9 +504,7 @@ async def check_earthquake_and_notify():
     earthquake_api_url = OUR_URL + '/latest/'
     response = await sync_to_async(requests.get)(earthquake_api_url)
     data = response.json()
-
     earthquake_info = data['info']
-    
     description = earthquake_info['description']
     
     message = (

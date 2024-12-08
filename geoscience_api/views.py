@@ -2,10 +2,13 @@ import json
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 import base64
+import requests
+from earthquake.models import Subscriber
+from earthquake.views import send_telegram_message
+from asgiref.sync import sync_to_async
 
 BASE_URL = settings.BASE_URL
 OUR_URL = settings.OUR_URL
@@ -496,3 +499,25 @@ class ImagesURL(APIView):
                 'message': message
             })
         return Response({'error': 'Event ID not found in latest earthquake data'})
+
+async def check_earthquake_and_notify():
+    earthquake_api_url = OUR_URL + '/latest/'
+    response = await sync_to_async(requests.get)(earthquake_api_url)
+    data = response.json()
+
+    earthquake_info = data['info']
+    magnitude = earthquake_info['magnitude']
+    location = earthquake_info['area']
+    message = (
+        f"Gempa dengan magnitudo {magnitude} terjadi di {location}.\n"
+        f"Tanggal: {earthquake_info['date']}\n"
+        f"Waktu: {earthquake_info['time']}\n"
+        f"Koordinat: {earthquake_info['latitude']}, {earthquake_info['longitude']}\n"
+        f"Kedalaman: {earthquake_info['depth']}\n"
+        f"Potensi: {earthquake_info['potential']}\n"
+        f"Instruksi: {earthquake_info['instruction']}"
+    )
+
+    subscribers = await sync_to_async(list)(Subscriber.objects.all())
+    for subscriber in subscribers:
+        await send_telegram_message(subscriber.chat_id, message)

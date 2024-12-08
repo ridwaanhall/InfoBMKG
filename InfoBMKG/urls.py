@@ -22,7 +22,7 @@ def redirect_to_quake(request):
     return redirect('/quake/')
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('api/', include('geoscience_api.urls')),
     path('quake/', include('earthquake.urls')),
     # path('weather/', include('weather.urls')),

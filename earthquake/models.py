@@ -12,4 +12,4 @@ class Subscriber(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.chat_id} ({self.date_created})'
+        return f'{self.chat_id} - {self.username}'

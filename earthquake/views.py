@@ -119,3 +119,29 @@ def last30tsunami_html(request):
         'last30tsunami': last30tsunami,
     }
     return render(request, 'earthquake/last30tsunami.html', context)
+
+def last3months_html(request):
+    try:
+        last3months_response = requests.get(f'{OUR_URL}/last3months/')
+        last3months_response.raise_for_status()  # Raise an HTTPError for bad responses
+        last3months = last3months_response.json()
+    except requests.RequestException as e:
+        last3months = None
+    
+    context = {
+        'last3months': last3months,
+    }
+    return render(request, 'earthquake/last3months.html', context)
+
+def last5years_html(request):
+    try:
+        last5years_response = requests.get(f'{OUR_URL}/last5years/')
+        last5years_response.raise_for_status()  # Raise an HTTPError for bad responses
+        last5years = last5years_response.json()
+    except requests.RequestException as e:
+        last5years = None
+    
+    context = {
+        'last5years': last5years,
+    }
+    return render(request, 'earthquake/last5years.html', context)

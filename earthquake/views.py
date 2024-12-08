@@ -145,3 +145,16 @@ def last5years_html(request):
         'last5years': last5years,
     }
     return render(request, 'earthquake/last5years.html', context)
+
+def destructive_html(request):
+    try:
+        destructive_response = requests.get(f'{OUR_URL}/destructive/')
+        destructive_response.raise_for_status()  # Raise an HTTPError for bad responses
+        destructive = destructive_response.json()
+    except requests.RequestException as e:
+        destructive = None
+    
+    context = {
+        'destructive': destructive,
+    }
+    return render(request, 'earthquake/destructive.html', context)

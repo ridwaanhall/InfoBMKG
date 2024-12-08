@@ -23,8 +23,13 @@ async def unsubscribe(update: Update, context: CallbackContext):
     chat_id = update.message.chat_id
     await sync_to_async(Subscriber.objects.filter(chat_id=chat_id).delete)()
     await update.message.reply_text("You have unsubscribed from earthquake notifications.")
-
-
+    
+async def help(update: Update, context: CallbackContext):
+    await update.message.reply_text(
+        "Use /start to subscribe to earthquake notifications.\n"
+        "Use /unsubscribe to unsubscribe from earthquake notifications.\n"
+        "Use /help to see this message again."
+    )
 
 def dashboard_html(request):
     try:

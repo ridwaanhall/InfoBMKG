@@ -15,4 +15,5 @@ urlpatterns = [
     # histories
     path('last3months/', views.last3months_html, name='last3months-quake'),
     path('last5years/', views.last5years_html, name='last5years-quake'),
+    path('destructive/', views.destructive_html, name='destructive-quake'),
 ]

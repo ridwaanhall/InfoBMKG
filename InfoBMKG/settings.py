@@ -18,6 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 BASE_URL = config('BASE_URL')
 OUR_URL = config('OUR_URL')
+BOT_TOKEN = config('BOT_TOKEN')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'geoscience_api',
     'earthquake',
     'weather',
+    'django_cron',
 ]
 
 MIDDLEWARE = [

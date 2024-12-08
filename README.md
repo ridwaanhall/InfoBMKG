@@ -53,7 +53,16 @@ py manage.py runserver
 ```
 
 ```bash
-\f
+import asyncio
+from geoscience_api.views import check_earthquake_and_notify
+
+async def main():
+    await check_earthquake_and_notify()
+
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+loop.run_until_complete(main())
+
 ```
 
 ## Contributing

@@ -510,7 +510,7 @@ async def check_earthquake_and_notify():
     description = earthquake_info['description']
     
     message = (
-        f"🌋 *Earthquake Notification* 🌋\n\n"
+        f"🌋 Earthquake Notification 🌋\n\n"
         f"📝 {description}"
     )
 

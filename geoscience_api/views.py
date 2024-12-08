@@ -506,16 +506,21 @@ async def check_earthquake_and_notify():
     data = response.json()
 
     earthquake_info = data['info']
-    magnitude = earthquake_info['magnitude']
-    location = earthquake_info['area']
+    
+    date = earthquake_info.get('date', 'N/A')
+    time = earthquake_info.get('time', 'N/A')
+    coordinates = earthquake_info.get('point', {}).get('coordinates', 'N/A')
+    magnitude = earthquake_info.get('magnitude', 'N/A')
+    depth = earthquake_info.get('depth', 'N/A')
+    area = earthquake_info.get('area', 'N/A')
+    felt = earthquake_info.get('felt', 'N/A')
+    
     message = (
-        f"Gempa dengan magnitudo {magnitude} terjadi di {location}.\n"
-        f"Tanggal: {earthquake_info['date']}\n"
-        f"Waktu: {earthquake_info['time']}\n"
-        f"Koordinat: {earthquake_info['latitude']}, {earthquake_info['longitude']}\n"
-        f"Kedalaman: {earthquake_info['depth']}\n"
-        f"Potensi: {earthquake_info['potential']}\n"
-        f"Instruksi: {earthquake_info['instruction']}"
+        f"🌍 *Earthquake Notification* 🌍\n\n"
+        f"📅 *Date:* {date} 🕒 *Time:* {time}\n"
+        f"📍 *Location:* {coordinates} ({area})\n"
+        f"💪 *Magnitude:* {magnitude} 📏 *Depth:* {depth}\n"
+        f"🫨 *Felt:* {felt}\n"
     )
 
     subscribers = await sync_to_async(list)(Subscriber.objects.all())

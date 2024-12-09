@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 20241012083740_narasi.txt
 *.geojson
+static/

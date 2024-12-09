@@ -11,12 +11,20 @@
         {
             "src": "static/**/*",
             "use": "@vercel/static"
+        },
+        {
+            "src": "staticfiles/**/*",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
         {
             "src": "/static/(.*)",
             "dest": "/static/$1"
+        },
+        {
+            "src": "/staticfiles/(.*)",
+            "dest": "/staticfiles/$1"
         },
         {
             "src": "/(.*)",

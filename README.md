@@ -21,6 +21,7 @@ This project provides the latest earthquake information in Indonesia. It fetches
 - Real-time earthquake data
 - Detailed information on each earthquake
 - User-friendly interface
+- telegram notification
 
 ## Installation
 

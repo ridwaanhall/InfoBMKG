@@ -53,6 +53,8 @@ To use this project, run the following command:
 py manage.py runserver
 ```
 
+test
+
 ```bash
 import asyncio
 from geoscience_api.views import check_earthquake_and_notify

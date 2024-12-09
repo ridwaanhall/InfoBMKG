@@ -4,7 +4,6 @@ __pycache__/
 *.pyc
 assets/
 static/
-templates/
 20241012083740_narasi.txt
 *.geojson
 vercel.json

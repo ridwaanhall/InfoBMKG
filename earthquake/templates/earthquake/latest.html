@@ -1,0 +1,241 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Latest{% endblock title %}
+
+{% block extra_css %}
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+crossorigin=""
+/>
+<script
+src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+crossorigin=""
+></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+<script src="{% static 'js/line.js' %}"></script>
+
+<style>
+#eqMap { 
+  height: 360px
+}
+</style>
+{% endblock extra_css%}
+
+{% block content %} 
+<div class="page-inner">
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">Latest Earthquake</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-home">
+                <a href="{% url 'dashboard-quake' %}">
+                    <i class="icon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'latest-quake' %}">Latest Earthquake</a>
+            </li>
+        </ul>
+        <div class="ms-md-auto py-2 py-md-0">
+            <div class="rounded-pill bg-info text-white px-3 py-2">
+                <i class="fas fa-clock fa-sm text-white-50"></i> Last update {{ latest.info.timesent|default:"N/A" }}
+            </div>
+        </div>
+    </div>
+    <div class="page-category">Stay informed about recent seismic activity.</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Detail Information</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="latest-earthquake-table" class="table table-bordered table-head-bg-info table-bordered-bd-info">
+                            <thead>
+                                <tr>
+                                    <th>DT</th>
+                                    <th>COORDINATES</th>
+                                    <th>MAG</th>
+                                    <th>DEPTH</th>
+                                    <th>AREA</th>
+                                    {% comment %} <th>Headline</th>
+                                    <th>Desc</th>
+                                    <th>Instruction</th> {% endcomment %}
+                                    <th>FELT</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>DT</th>
+                                    <th>COORDINATES</th>
+                                    <th>MAG</th>
+                                    <th>DEPTH</th>
+                                    <th>AREA</th>
+                                    {% comment %} <th>Headline</th>
+                                    <th>Desc</th>
+                                    <th>Instruction</th> {% endcomment %}
+                                    <th>FELT</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                <tr>
+                                    <td>{{ latest.info.date }} {{ latest.info.time }}</td>
+                                    <td>{{ latest.info.latitude }} {{ latest.info.longitude }}</td>
+                                    <td>{{ latest.info.magnitude }}</td>
+                                    <td>{{ latest.info.depth }}</td>
+                                    <td>{{ latest.info.area }}</td>
+                                    {% comment %} <td>{{ latest.info.headline }}</td>
+                                    <td>{{ latest.info.description }}</td>
+                                    <td>{{ latest.info.instruction }}</td> {% endcomment %}
+                                    <td>{{ latest.info.felt }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Map Location</div>
+                </div>
+                <div class="card-body">
+                    <div id="eqMap"> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Intensity Logo</h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-sub">
+                        Impact information based on observational data from Accelerometer equipment
+                    </div>
+                    {% if images_url.intensitylogo_url %}
+                        <img src="{{ images_url.intensitylogo_url }}" alt="Intensity Logo" class="img-fluid" />
+                    {% else %}
+                        <img src="{{ images_url.mmi_url }}" alt="Intensity Logo" class="img-fluid" />
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Impacts List</h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-sub">
+                        Impact information by district based on observational data from Accelerometer equipment
+                    </div>
+                    <img src="{{ images_url.impactlist_url }}" alt="Impact List" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Location Map</h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-sub">
+                        Distribution of Accelerometer equipment used
+                    </div>
+                    <img src="{{ images_url.locmap_url }}" alt="Location Map" class="img-fluid" />
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Station List</h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-sub">
+                        Results of PGA Max and MMI calculations based on observational data from Accelerometer equipment
+                    </div>
+                    <img src="{{ images_url.stationlist_url }}" alt="Station List" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src="{% static 'js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+<script src="{% static 'js/plugin/datatables/datatables.min.js' %}"></script>
+<script src="{% static 'js/kaiadmin.min.js' %}"></script>
+{% comment %} <script>
+    $(document).ready(function () {
+        $("#latest-earthquake-table").DataTable({});
+    });
+</script> {% endcomment %}
+
+<script>
+    // Making a map and tiles
+    const mymap = L.map('eqMap').setView([{{ latitude }}, {{ longitude }}], 7); // Set initial view to the latitude and longitude
+    const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tiles = L.tileLayer(tileUrl, { attribution });
+    tiles.addTo(mymap);
+
+    // Making a marker with a custom icon
+    const locIcon = L.icon({
+        iconUrl: "{% static 'img/circle.png' %}",
+        iconSize: [50, 50],
+        iconAnchor: [25, 25]
+    });
+    let marker = L.marker([{{ latitude }}, {{ longitude }}], 
+    { icon: locIcon }
+    )
+      .addTo(mymap)
+      .bindPopup('<div class="text-gray-700 mb-0">Datetime : {{ latest.info.date|default:"N/A" }} {{ latest.info.time|default:"N/A" }}</div><div class="text-gray-700 mb-0">Coordinates : {{ latest.info.point.coordinates|default:"N/A" }}</div><div class="text-gray-700 mb-0"> Magnitude : {{ latest.info.magnitude|default:"N/A" }} M</div><div class="text-gray-700 mb-2"> Depth : {{ latest.info.depth|default:"N/A" }}</div>');
+
+
+    // Google Map Layer
+
+    googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+        maxZoom: 20,
+        subdomains:['mt0','mt1','mt2','mt3']
+     });
+     googleStreets.addTo(mymap);
+    
+     // Satelite Layer
+    googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+       maxZoom: 20,
+       subdomains:['mt0','mt1','mt2','mt3']
+     });
+    googleSat.addTo(mymap);
+
+    // GEOJSON
+    const fault_indo_worldLine = L.geoJSON(fault_indo_world).addTo(mymap);
+
+    const baseLayers = {
+        "Satellite":googleSat,
+        "Google Map":googleStreets,
+        "OpenStreetMap": tiles,
+    };
+
+    const overlays = {
+        "Fault Indo World":fault_indo_worldLine,
+    };
+  
+    L.control.layers(baseLayers, overlays).addTo(mymap);
+
+</script>
+
+{% endblock extra_js %}

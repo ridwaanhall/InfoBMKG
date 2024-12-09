@@ -1,0 +1,129 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Destructive Epicenter{% endblock title %}
+
+{% block extra_css %}
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+crossorigin=""
+/>
+<script
+src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+crossorigin=""
+></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+<script src="{% static 'js/line.js' %}"></script>
+
+<style>
+#eqMap { 
+  height: 360px
+}
+</style>
+{% endblock extra_css%}
+
+{% block content %} 
+<div class="page-inner">
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">Destructive Epicenter</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-home">
+                <a href="{% url 'dashboard-quake' %}">
+                    <i class="icon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'destructive-quake' %}">Destructive Epicenter</a>
+            </li>
+        </ul>
+        <div class="ms-md-auto py-2 py-md-0">
+            <div class="rounded-pill bg-info text-white px-3 py-2">
+                <i class="fas fa-clock fa-sm text-white-50"></i> Last update {{ destructive.sent|default:"N/A" }}
+            </div>
+        </div>
+    </div>
+    <div class="page-category">Stay informed about the destructive epicenter earthquake events happening around Indonesia.</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Destructive Epicenter Earthquake Data</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="destructive-earthquake" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Magnitude</th>
+                                    <th>Datetime (UTC)</th>
+                                    <th>Coordinates</th>
+                                    <th>Location</th>
+                                    <th>Depth (KM)</th>
+                                    <th>Epicenter</th>
+                                    <th>Tsunami</th>
+                                    <th>Felt</th>
+                                    <th>Damage Victims</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Magnitude</th>
+                                    <th>Datetime (UTC)</th>
+                                    <th>Coordinates</th>
+                                    <th>Location</th>
+                                    <th>Depth (KM)</th>
+                                    <th>Epicenter</th>
+                                    <th>Tsunami</th>
+                                    <th>Felt</th>
+                                    <th>Damage Victims</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for feature in destructive.features %}
+                                <tr>
+                                    <td><span style="color: red; text-align: center; display: block; font-size: 1.5em;">{{ feature.properties.mag }}</span></td>
+                                    <td>{{ feature.properties.date }} {{ feature.properties.ot_utc }}</td>
+                                    <td>{{ feature.geometry.coordinates.1 }}, {{ feature.geometry.coordinates.0 }}</td>
+                                    <td>{{ feature.properties.lokasi }}</td>
+                                    <td>{{ feature.properties.depth }}</td>
+                                    <td>{{ feature.properties.pusat_gempa }}</td>
+                                    <td>{{ feature.properties.tsunami }}</td>
+                                    <td>{{ feature.properties.dirasakan }}</td>
+                                    <td>{{ feature.properties.korban_kerusakan }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src="{% static 'js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+<script src="{% static 'js/plugin/datatables/datatables.min.js' %}"></script>
+<script src="{% static 'js/kaiadmin.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $("#destructive-earthquake").DataTable({
+            "order": []
+        });
+    });
+</script>
+
+{% endblock extra_js %}

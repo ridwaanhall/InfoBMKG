@@ -1,0 +1,149 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Last 30 >5 M{% endblock title %}
+
+{% block extra_css %}
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+crossorigin=""
+/>
+<script
+src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+crossorigin=""
+></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+<script src="{% static 'js/line.js' %}"></script>
+
+<style>
+#eqMap { 
+  height: 360px
+}
+</style>
+{% endblock extra_css%}
+
+{% block content %} 
+<div class="page-inner">
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">Last 30 >5 M</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-home">
+                <a href="{% url 'dashboard-quake' %}">
+                    <i class="icon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'last30-quake' %}">Last 30 >5 M</a>
+            </li>
+        </ul>
+        <div class="ms-md-auto py-2 py-md-0">
+            <div class="rounded-pill bg-info text-white px-3 py-2">
+                <i class="fas fa-clock fa-sm text-white-50"></i> Last update {{ last30.sent|default:"N/A" }}
+            </div>
+        </div>
+    </div>
+    <div class="page-category">Stay informed about the latest 30 >5 M earthquake events happening around Indonesia.</div>
+    <div class="col-lg-12 mb-4">
+        <div class="card bg-danger text-white shadow">
+            <div class="card-body">
+                Disclaimer
+                <div class="mb-0">This earthquake information is disseminated within 5 minutes of the event via SMS, mobile app, email, fax, website, WRS, GTS, and social media. It is a rapid update from InaTEWS and may differ from final earthquake parameters.</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Last 30 >5 M Earthquake Data</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="last30-earthquake" class="display table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    {% comment %} <th>Event ID</th> {% endcomment %}
+                                    <th>Subject</th>
+                                    <th>Magnitude</th>
+                                    <th>Datetime</th>
+                                    <th>Coordinates</th>
+                                    <th>Area</th>
+                                    <th>Depth</th>
+                                    {% comment %} <th>Potential</th> {% endcomment %}
+                                    {% comment %} <th>Felt</th> {% endcomment %}
+                                    {% comment %}<th>Headline</th>
+                                    <th>Description</th>
+                                    <th>Instruction</th>
+                                    <th>Shakemap</th> {% endcomment %}
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    {% comment %} <th>Event ID</th> {% endcomment %}
+                                    <th>Subject</th>
+                                    <th>Magnitude</th>
+                                    <th>Datetime</th>
+                                    <th>Coordinates</th>
+                                    <th>Area</th>
+                                    <th>Depth</th>
+                                    {% comment %} <th>Potential</th> {% endcomment %}
+                                    {% comment %} <th>Felt</th> {% endcomment %}
+                                    {% comment %}<th>Headline</th>
+                                    <th>Description</th>
+                                    <th>Instruction</th>
+                                    <th>Shakemap</th> {% endcomment %}
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for quake in last30.info %}
+                                <tr>
+                                    {% comment %} <td>{{ quake.eventid }}</td> {% endcomment %}
+                                    <td>{{ quake.subject }}</td>
+                                    <td><span style="color: red; text-align: center; display: block; font-size: 1.5em;">{{ quake.magnitude }}</span></td>
+                                    <td>{{ quake.date }} {{ quake.time }}</td>
+                                    <td>{{ quake.latitude }}, {{ quake.longitude }}</td>
+                                    <td>{{ quake.area }}</td>
+                                    <td>{{ quake.depth }}</td>
+                                    {% comment %} <td>{{ quake.felt }}</td> {% endcomment %}
+                                    {% comment %} <td>{{ quake.potential }}</td> {% endcomment %}
+                                    {% comment %}<td>{{ quake.headline }}</td>
+                                    <td>{{ quake.description }}</td>
+                                    <td>{{ quake.instruction }}</td>
+                                    <td><img src="{{ quake.shakemap }}" alt="Shakemap" width="100"></td> {% endcomment %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src="{% static 'js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+<script src="{% static 'js/plugin/datatables/datatables.min.js' %}"></script>
+<script src="{% static 'js/kaiadmin.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $("#last30-earthquake").DataTable({
+            "order": []
+        });
+    });
+</script>
+
+{% endblock extra_js %}

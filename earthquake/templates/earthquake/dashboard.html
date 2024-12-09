@@ -1,0 +1,444 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsvectormap"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <script src="{% static 'js/line.js' %}"></script>
+
+    <style>
+        #eqMap {
+            height: 360px;
+        }
+    </style>
+{% endblock extra_css %}
+
+{% block content %} 
+<div class="page-inner">
+    <div class="page-header mb-0">
+        <h3 class="fw-bold mb-3">Earthquake Dashboard</h3>
+        <ul class="breadcrumbs mb-3">
+            <li class="nav-home">
+                <a href="{% url 'dashboard-quake' %}">
+                    <i class="icon-home"></i>
+                </a>
+            </li>
+            {% comment %} <li class="separator">
+                <i class="icon-arrow-right"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'latest-quake' %}">Latest Earthquake</a>
+            </li> {% endcomment %}
+        </ul>
+        <div class="ms-md-auto py-2 py-md-0">
+            <div class="rounded-pill bg-info text-white px-3 py-2">
+                <i class="fas fa-clock fa-sm text-white-50"></i> Last update {{ latest.info.timesent|default:"N/A" }}
+            </div>
+        </div>
+    </div>
+    <div class="page-category">Real-time monitoring and analysis of the latest earthquakes.</div>
+    <div class="col-lg-12 mb-4">
+        <div class="card bg-danger text-white shadow">
+            <div class="card-body">
+                Danger !!
+                <div class="mb-0">{{ latest.info.headline|default:"No headline available" }}.</div>
+            </div>
+        </div>
+    </div>
+    <div class="row row-card-no-pd">
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="icon-big text-center">
+                                <i class="icon-graph text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="col-9 col-stats">
+                            <div class="numbers">
+                                <p class="card-category">MAGNITUDE</p>
+                                <h4 class="card-title">{{ latest.info.magnitude|default:"N/A" }} M</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="icon-big text-center">
+                                <i class="icon-clock text-success"></i>
+                            </div>
+                        </div>
+                        <div class="col-9 col-stats">
+                            <div class="numbers">
+                                <p class="card-category">DATETIME {{ latest.info.date|default:"N/A" }}</p>
+                                <h4 class="card-title">{{ latest.info.time|default:"N/A" }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="icon-big text-center">
+                                <i class="icon-arrow-down-circle text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="col-9 col-stats">
+                            <div class="numbers">
+                                <p class="card-category">DEPTH</p>
+                                <h4 class="card-title">{{ latest.info.depth|default:"N/A" }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="icon-big text-center">
+                                <i class="icon-location-pin text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="col-9 col-stats">
+                            <div class="numbers">
+                                <p class="card-category">COORDINATES</p>
+                                <h4 class="card-title">{{ latest.info.point.coordinates|default:"N/A" }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-round">
+                <div class="card-header">
+                    <div class="card-head-row">
+                        <div class="card-title">Live Maps</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="eqMap"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-stats card-primary bg-primary-gradient card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="icon-big text-center">
+                                <i class="fas fa-map-pin"></i>
+                            </div>
+                        </div>
+                        <div class="col-10 col-stats">
+                            <div class="numbers">
+                                <p class="card-category">LOCATION</p>
+                                <h4 class="card-title">{{ latest.info.area|default:"N/A" }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-stats card-danger bg-danger-gradient card-round">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-2">
+                            <div class="icon-big text-center">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </div>
+                        </div>
+                        <div class="col-10 col-stats">
+                            <div class="numbers">
+                                <p class="card-category">FELT AREA</p>
+                                <h4 class="card-title">{{ latest.info.felt|default:"N/A" }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card shadow mb-4">
+                <a href="#" class="d-block card-header py-3" data-bs-toggle="modal" data-bs-target="#MMIMapModal">
+                    <h6 class="m-0">Click here to view the MMI Map</h6>
+                </a>
+            </div>
+        </div>
+    
+        <!-- Modal -->
+        <div class="modal fade" id="MMIMapModal" tabindex="-1" aria-labelledby="MMIMapModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="MMIMapModalLabel">BMKG MMI Map</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="{{ mmi_map.image_url }}" alt="BMKG MMI Map" class="col-auto" style="max-width: 100%; height: auto;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% comment %} <div class="row">
+        <div class="col-md-12">
+            <div class="card card-round">
+                <div class="card-header">
+                    <div class="card-head-row card-tools-still-right">
+                        <h4 class="card-title">Users Geolocation</h4>
+                        <div class="card-tools">
+                            <button class="btn btn-icon btn-link btn-primary btn-xs">
+                                <span class="fa fa-angle-down"></span>
+                            </button>
+                            <button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
+                                <span class="fa fa-sync-alt"></span>
+                            </button>
+                            <button class="btn btn-icon btn-link btn-primary btn-xs">
+                                <span class="fa fa-times"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="card-category">
+                        Map of the distribution of users around the world
+                    </p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="table-responsive table-hover table-sales">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="flag">
+                                                    <img src="{% static 'img/flags/id.png' %}" alt="indonesia" />
+                                                </div>
+                                            </td>
+                                            <td>Indonesia</td>
+                                            <td class="text-end">2.320</td>
+                                            <td class="text-end">42.18%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flag">
+                                                    <img src="{% static 'img/flags/us.png' %}" alt="united states" />
+                                                </div>
+                                            </td>
+                                            <td>USA</td>
+                                            <td class="text-end">240</td>
+                                            <td class="text-end">4.36%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flag">
+                                                    <img src="{% static 'img/flags/au.png' %}" alt="australia" />
+                                                </div>
+                                            </td>
+                                            <td>Australia</td>
+                                            <td class="text-end">119</td>
+                                            <td class="text-end">2.16%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flag">
+                                                    <img src="{% static 'img/flags/ru.png' %}" alt="russia" />
+                                                </div>
+                                            </td>
+                                            <td>Russia</td>
+                                            <td class="text-end">1.081</td>
+                                            <td class="text-end">19.65%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flag">
+                                                    <img src="{% static 'img/flags/cn.png' %}" alt="china" />
+                                                </div>
+                                            </td>
+                                            <td>China</td>
+                                            <td class="text-end">1.100</td>
+                                            <td class="text-end">20%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="flag">
+                                                    <img src="{% static 'img/flags/br.png' %}" alt="brazil" />
+                                                </div>
+                                            </td>
+                                            <td>Brasil</td>
+                                            <td class="text-end">640</td>
+                                            <td class="text-end">11.63%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mapcontainer">
+                                <div id="map" style="width: 600px; height: 350px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-round">
+                <div class="card-header">
+                    <div class="card-head-row card-tools-still-right">
+                        <div class="card-title">Narration from BMKG</div>
+                        {% comment %} <div class="card-tools">
+                            <div class="dropdown">
+                                <button class="btn btn-icon btn-clean me-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ narration.original_narration|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<!-- jQuery Scrollbar -->
+<script src="{% static 'js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+
+<!-- Chart JS -->
+<script src="{% static 'js/plugin/chart.js/chart.min.js' %}"></script>
+
+<!-- jQuery Sparkline -->
+<script src="{% static 'js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
+
+<!-- Chart Circle -->
+<script src="{% static 'js/plugin/chart-circle/circles.min.js' %}"></script>
+
+<!-- Datatables -->
+<script src="{% static 'js/plugin/datatables/datatables.min.js' %}"></script>
+
+<!-- Bootstrap Notify -->
+<script src="{% static 'js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
+
+<!-- jQuery Vector Maps -->
+{% comment %} <script src="{% static 'js/plugin/jsvectormap/jsvectormap.min.js' %}"></script>
+<script src="{% static 'js/plugin/jsvectormap/world.js' %}"></script> {% endcomment %}
+
+<script>
+    var map = new jsVectorMap({
+        selectedRegions: ['ID'],
+        selector: "#map",
+        map: "world",
+        markers: [
+            {
+                name: '{{ latest.info.area }}',
+                coords: [{{ latitude }}, {{ longitude}}],
+                style: {
+                    initial: {
+                        image: '{% static "img/pin.png" %}'
+                    }
+                }
+            }
+        ]
+    });
+</script>
+
+<!-- Sweet Alert -->
+<script src="{% static 'js/plugin/sweetalert/sweetalert.min.js' %}"></script>
+
+<!-- Kaiadmin JS -->
+<script src="{% static 'js/kaiadmin.min.js' %}"></script>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script>
+    // Making a map and tiles
+    const mymap = L.map('eqMap').setView([{{ latitude }}, {{ longitude }}], 7); // Set initial view to the latitude and longitude
+    const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tiles = L.tileLayer(tileUrl, { attribution });
+    tiles.addTo(mymap);
+
+    // Making a marker with a custom icon
+    const locIcon = L.icon({
+        iconUrl: '{% static "img/circle.png" %}',
+        iconSize: [50, 50],
+        iconAnchor: [25, 25]
+    });
+    let marker = L.marker([{{ latitude }}, {{ longitude }}], 
+    { icon: locIcon }
+    )
+      .addTo(mymap)
+      .bindPopup('<div class="text-gray-700 mb-0">Datetime : {{ latest.info.date|default:"N/A" }} {{ latest.info.time|default:"N/A" }}</div><div class="text-gray-700 mb-0">Coordinates : {{ latest.info.point.coordinates|default:"N/A" }}</div><div class="text-gray-700 mb-0"> Magnitude : {{ latest.info.magnitude|default:"N/A" }} M</div><div class="text-gray-700 mb-2"> Depth : {{ latest.info.depth|default:"N/A" }}</div>');
+
+
+    // Google Map Layer
+
+    googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+        maxZoom: 20,
+        subdomains:['mt0','mt1','mt2','mt3']
+     });
+     googleStreets.addTo(mymap);
+    
+     // Satelite Layer
+    googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+       maxZoom: 20,
+       subdomains:['mt0','mt1','mt2','mt3']
+     });
+    googleSat.addTo(mymap);
+
+    // GEOJSON
+    const fault_indo_worldLine = L.geoJSON(fault_indo_world).addTo(mymap);
+
+    const baseLayers = {
+        "Satellite":googleSat,
+        "Google Map":googleStreets,
+        "OpenStreetMap": tiles,
+    };
+
+    const overlays = {
+        "Fault Indo World":fault_indo_worldLine,
+    };
+  
+    L.control.layers(baseLayers, overlays).addTo(mymap);
+
+  
+</script>
+
+{% endblock extra_js %}

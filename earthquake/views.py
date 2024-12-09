@@ -1,71 +1,8 @@
 import requests
 from django.shortcuts import render
-from telegram import Bot, Update
-from earthquake.models import Subscriber
-from telegram.ext import CallbackContext
-from asgiref.sync import sync_to_async
 from django.conf import settings
 
 OUR_URL = settings.OUR_URL
-BOT_TOKEN = settings.BOT_TOKEN
-bot = Bot(token=BOT_TOKEN)
-
-async def send_telegram_message(chat_id, message):
-    await bot.send_message(chat_id=chat_id, text=message)
-
-async def start(update: Update, context: CallbackContext):
-    chat_id = update.message.chat_id
-    user_id = update.message.from_user.id
-    first_name = update.message.from_user.first_name or ""
-    last_name = update.message.from_user.last_name or ""
-    username = update.message.from_user.username or ""
-    message_text = update.message.text
-    message_time = update.message.date
-    
-    print(f"[{message_time}] {username}: \"{message_text}\"")
-
-    subscriber, created = await sync_to_async(Subscriber.objects.get_or_create)(chat_id=chat_id)
-    subscriber.user_id = user_id
-    subscriber.first_name = first_name
-    subscriber.last_name = last_name
-    subscriber.username = username
-    await sync_to_async(subscriber.save)()
-
-    await update.message.reply_text(f"Hi @{username}, thank you for subscribing to earthquake notifications. You'll receive updates on any seismic activities.\nBot owner: @ridwaanhall")
-    await update.message.reply_text("Use /unsubscribe if you wish to opt out of notifications.")
-
-async def unsubscribe(update: Update, context: CallbackContext):
-    chat_id = update.message.chat_id
-    username = update.message.from_user.username or ""
-    message_text = update.message.text
-    message_time = update.message.date
-    
-    print(f"[{message_time}] {username}: \"{message_text}\"")
-    await sync_to_async(Subscriber.objects.filter(chat_id=chat_id).delete)()
-    await update.message.reply_text("You have opted out of earthquake notifications.")
-
-async def help(update: Update, context: CallbackContext):
-    username = update.message.from_user.username or ""
-    message_text = update.message.text
-    message_time = update.message.date
-    
-    print(f"[{message_time}] {username}: \"{message_text}\"")
-    
-    await update.message.reply_text(
-        "Here's how to use the bot:\n"
-        "/start - Subscribe to notifications.\n"
-        "/unsubscribe - Unsubscribe from notifications.\n"
-        "/help - View this help message."
-    )
-
-async def handle_message(update: Update, context: CallbackContext):
-    username = update.message.from_user.username or ""
-    message_text = update.message.text
-    message_time = update.message.date
-    
-    print(f"[{message_time}] {username}: \"{message_text}\"")
-    
-    await update.message.reply_text("Sorry, I can't assist with that. Please use /help to see available commands.")
 
 def dashboard_html(request):
     try:

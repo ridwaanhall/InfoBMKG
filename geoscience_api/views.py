@@ -6,9 +6,6 @@ import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 import base64
 import requests
-from earthquake.models import Subscriber
-from earthquake.views import send_telegram_message
-from asgiref.sync import sync_to_async
 
 BASE_URL = settings.BASE_URL
 OUR_URL = settings.OUR_URL
@@ -500,18 +497,3 @@ class ImagesURL(APIView):
             })
         return Response({'error': 'Event ID not found in latest earthquake data'})
 
-async def check_earthquake_and_notify():
-    earthquake_api_url = OUR_URL + '/latest/'
-    response = await sync_to_async(requests.get)(earthquake_api_url)
-    data = response.json()
-    earthquake_info = data['info']
-    description = earthquake_info['description']
-    
-    message = (
-        f"🌋 Earthquake Notification 🌋\n\n"
-        f"📝 {description}"
-    )
-
-    subscribers = await sync_to_async(list)(Subscriber.objects.all())
-    for subscriber in subscribers:
-        await send_telegram_message(subscriber.chat_id, message)

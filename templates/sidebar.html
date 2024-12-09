@@ -1,0 +1,97 @@
+{% load static %}
+<div class="sidebar" data-background-color="dark">
+    <div class="sidebar-logo">
+        <!-- Logo Header -->
+        <div class="logo-header" data-background-color="dark">
+            <a href="{% url 'dashboard-quake' %}" class="logo">
+                <span class="navbar-brand text-white">Geoscience</span>
+            </a>
+            <div class="nav-toggle">
+                <button class="btn btn-toggle toggle-sidebar">
+                    <i class="gg-menu-right"></i>
+                </button>
+                <button class="btn btn-toggle sidenav-toggler">
+                    <i class="gg-menu-left"></i>
+                </button>
+            </div>
+            <button class="topbar-toggler more">
+                <i class="gg-more-vertical-alt"></i>
+            </button>
+        </div>
+        <!-- End Logo Header -->
+    </div>
+    <div class="sidebar-wrapper scrollbar scrollbar-inner">
+        <div class="sidebar-content">
+            <ul class="nav nav-secondary">
+                <li class="nav-item {% if request.resolver_match.url_name == 'dashboard-quake' %}active{% endif %}">
+                    <a href="{% url 'dashboard-quake' %}">
+                        <i class="fas fa-home"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'latest-quake' %}active{% endif %}">
+                    <a href="{% url 'latest-quake' %}">
+                        <i class="fas fa-history"></i>
+                        <p>Latest</p>
+                    </a>
+                </li>
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Earthquake</h4>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'live200-quake' %}active{% endif %}">
+                    <a href="{% url 'live200-quake' %}">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <p>Real-Time</p>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'last30felt-quake' %}active{% endif %}">
+                    <a href="{% url 'last30felt-quake' %}">
+                        <i class="fas fa-map-pin"></i>
+                        <p>Last 30 Felt</p>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'last30-quake' %}active{% endif %}">
+                    <a href="{% url 'last30-quake' %}">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Last 30 >5 M</p>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'last30tsunami-quake' %}active{% endif %}">
+                    <a href="{% url 'last30tsunami-quake' %}">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Last 30 Tsunami</p>
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav nav-secondary">
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Histories</h4>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'last3months-quake' %}active{% endif %}">
+                    <a href="{% url 'last3months-quake' %}">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <p>Last 3 Months</p>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'last5years-quake' %}active{% endif %}">
+                    <a href="{% url 'last5years-quake' %}">
+                        <i class="fas fa-map-pin"></i>
+                        <p>Last 5 Years</p>
+                    </a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'destructive-quake' %}active{% endif %}">
+                    <a href="{% url 'destructive-quake' %}">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>Destructive Epicenter</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

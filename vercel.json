@@ -22,8 +22,5 @@
             "src": "/(.*)",
             "dest": "InfoBMKG/wsgi.py"
         }
-    ],
-    "scripts": {
-        "post-build": "python InfoBMKG/manage.py collectstatic --noinput"
-    }
+    ]
 }

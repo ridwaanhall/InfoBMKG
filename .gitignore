@@ -2,7 +2,5 @@
 db.sqlite3
 __pycache__/
 *.pyc
-assets/
-static/
 20241012083740_narasi.txt
 *.geojson

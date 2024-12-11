@@ -27,7 +27,7 @@ BOT_TOKEN = config('BOT_TOKEN')
 SECRET_KEY = 'django-insecure-qybkpzsal1u6cqjmwr&dx$=vfe8go7s1%9xzq84o8ijj6uqurq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     '.vercel.app', 
